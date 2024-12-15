@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+    parameters {
+        choice(name: 'TEST_ENV', choices: ['dev', 'staging', 'prod'], description: 'Environment for performance tests')
+        string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Git branch')
+    }
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: "${BRANCH_NAME}", url: 'https://your-repo-url.git'
+            }
+        }
+        stage('Run Performance Tests') {
+            steps {
+                script {
+                    sh 'jmeter -n -t tests/performance.jmx -l results.jtl'
+                }
+            }
+        }
+        stage('Publish Performance Report') {
+            steps {
+                perfReport sourceDataFiles: 'results.jtl'
+            }
+        }
+    }
+}

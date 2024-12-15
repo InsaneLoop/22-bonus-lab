@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Git branch')
+    }
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: "${BRANCH_NAME}", url: 'https://your-repo-url.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                script {
+                    sh 'javac Main.java'
+                    sh 'java Main'
+                }
+            }
+        }
+    }
+}
